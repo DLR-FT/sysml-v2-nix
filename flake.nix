@@ -11,12 +11,12 @@
         let
           pkgs = import nixpkgs {
             inherit system;
-            overlays = [
-              (f: p: { jre = p.jdk17_headless; })
-            ];
           };
 
-          sbt = pkgs.sbt.override { jre = pkgs.jdk17_headless; };
+          # long live the legacy...
+          # 2023-11-13: jdk17 breaks
+          java = pkgs.jdk11_headless;
+          sbt = pkgs.sbt.override { jre = java; };
 
           # necessary because of
           # https://github.com/zaninime/sbt-derivation/issues/17
@@ -36,12 +36,37 @@
                 rev = version;
                 sha256 = "sha256-kel3zWaIUE7AtiXQMuQ4nYJ9ln892XlukDOp5MOLg3c=";
               };
-              depsSha256 = "";
+              depsSha256 = "sha256-3N+P965gG3QfZ8ygnFaGf1TXOcNU3RfPmxvga//4c5E=";
+
+              # inspired from https://github.com/sbt/sbt/issues/6541#issuecomment-860213415
+              postPatch = ''
+                echo 'addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.1.4")' >> project/plugins.sbt
+              '';
+              overrideDepsAttrs = final: prev: { inherit postPatch; };
+
+
+              buildPhase = ''
+                runHook preInstall
+
+                sbt compile
+
+                runHook postInstall
+              '';
+
+
+              installPhase = ''
+                runHook preInstall
+
+                sbt assembly
+                cp --archive --recursive -- . $out
+
+                runHook postInstall
+              '';
             };
           };
 
           devShells.default = pkgs.mkShell {
-            nativeBuildInputs = [ sbt ];
+            nativeBuildInputs = [ java sbt ];
           };
         }
       );
