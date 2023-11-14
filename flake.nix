@@ -36,7 +36,7 @@
                 rev = version;
                 sha256 = "sha256-kel3zWaIUE7AtiXQMuQ4nYJ9ln892XlukDOp5MOLg3c=";
               };
-              depsSha256 = "sha256-jrVNSSXTj+4mZeRrqPiLvXxUoj58OFhqIJhukcfNyvk=";
+              depsSha256 = "sha256-3N+P965gG3QfZ8ygnFaGf1TXOcNU3RfPmxvgZ//4c5E=";
 
               # Per default, sbt builds a thin jar, which does not contain all its dependencies. The
               # sbt-assembly plugin allows the building of fat lib, that contains all dependencies.
@@ -45,45 +45,51 @@
               #
               # inspired from https://github.com/sbt/sbt/issues/6541#issuecomment-860213415
               # and https://stackoverflow.com/a/39058507
-              postPatch = ''
-                cat << EOF >> project/plugins.sbt
-                addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.1.4")
-                EOF
+              # and https://stackoverflow.com/a/55433836
+              # postPatch = ''
+              #   cat << EOF >> project/plugins.sbt
+              #   addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.1.4")
+              #   EOF
 
-                cat << EOF >> build.sbt
-                assemblyMergeStrategy in assembly := {
-                  case PathList("META-INF", _*) => MergeStrategy.discard
-                  case _                        => MergeStrategy.first
-                }
-                EOF
-              '';
-              overrideDepsAttrs = final: prev: { inherit postPatch; };
-
-
+              #   cat << EOF >> build.sbt
+              #   assemblyMergeStrategy in assembly := {
+              #     case manifest if manifest.contains("MANIFEST.MF") =>
+              #       // We don't need manifest files since sbt-assembly will create
+              #       // one with the given settings
+              #       MergeStrategy.discard
+              #     case referenceOverrides if referenceOverrides.contains("reference-overrides.conf") =>
+              #       // Keep the content for all reference-overrides.conf files
+              #       MergeStrategy.concat
+              #     case x =>
+              #       // For all the other files, use the default sbt-assembly merge strategy
+              #       // val oldStrategy = (assemblyMergeStrategy in assembly).value
+              #       // oldStrategy(x)
+              #       MergeStrategy.first
+              #   }
+              #   EOF
+              # '';
+              # overrideDepsAttrs = final: prev: { inherit postPatch; };
               buildPhase = ''
                 runHook preInstall
-
-                sbt compile
-
+                sbt dist
                 runHook postInstall
               '';
-
 
               installPhase = ''
                 runHook preInstall
-
-                sbt package
-                sbt assembly
-                sbt 'inspect run' 'show runtime:fullClasspath'
-                cp --archive --recursive -- . $out
-
+                unzip target/universal/*.zip
+                mv sysml-* $out
                 runHook postInstall
               '';
+              nativeBuildInputs = with pkgs; [
+                unzip
+              ];
             };
           };
 
           devShells.default = pkgs.mkShell {
             nativeBuildInputs = [ java sbt ];
+            JAVA_HOME = java;
           };
         }
       );
