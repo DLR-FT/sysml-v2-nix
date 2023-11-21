@@ -14,7 +14,7 @@
           };
 
           # long live the legacy...
-          # 2023-11-13: jdk17 breaks
+          # 2023-11-13: jdk17 breaks, the upstream projects requires Java 11
           java = pkgs.jdk11_headless;
           sbt = pkgs.sbt.override { jre = java; };
 
@@ -27,6 +27,7 @@
         in
         {
           packages = rec {
+            default = sysml-v2-api-server;
             sysml-v2-api-server = mkSbtDerivation rec {
               pname = "SysML-v2-API-Services";
               version = "2023-02";
@@ -38,37 +39,6 @@
               };
               depsSha256 = "sha256-3N+P965gG3QfZ8ygnFaGf1TXOcNU3RfPmxvgZ//4c5E=";
 
-              # Per default, sbt builds a thin jar, which does not contain all its dependencies. The
-              # sbt-assembly plugin allows the building of fat lib, that contains all dependencies.
-              # Unfortunately, some of the dependencies clash, thus it is necessary to merge specify
-              # a dismissive merge strategy.
-              #
-              # inspired from https://github.com/sbt/sbt/issues/6541#issuecomment-860213415
-              # and https://stackoverflow.com/a/39058507
-              # and https://stackoverflow.com/a/55433836
-              # postPatch = ''
-              #   cat << EOF >> project/plugins.sbt
-              #   addSbtPlugin("com.eed3si9n" % "sbt-assembly" % "2.1.4")
-              #   EOF
-
-              #   cat << EOF >> build.sbt
-              #   assemblyMergeStrategy in assembly := {
-              #     case manifest if manifest.contains("MANIFEST.MF") =>
-              #       // We don't need manifest files since sbt-assembly will create
-              #       // one with the given settings
-              #       MergeStrategy.discard
-              #     case referenceOverrides if referenceOverrides.contains("reference-overrides.conf") =>
-              #       // Keep the content for all reference-overrides.conf files
-              #       MergeStrategy.concat
-              #     case x =>
-              #       // For all the other files, use the default sbt-assembly merge strategy
-              #       // val oldStrategy = (assemblyMergeStrategy in assembly).value
-              #       // oldStrategy(x)
-              #       MergeStrategy.first
-              #   }
-              #   EOF
-              # '';
-              # overrideDepsAttrs = final: prev: { inherit postPatch; };
               buildPhase = ''
                 runHook preInstall
                 sbt dist
@@ -81,6 +51,10 @@
                 mv sysml-* $out
                 runHook postInstall
               '';
+              preFixup = ''
+                substituteInPlace $out/bin/sysml-v2-api-services.bat \
+                  --replace 'echo "java"' '${java}/bin/java'
+              '';
               nativeBuildInputs = with pkgs; [
                 unzip
               ];
@@ -88,8 +62,11 @@
           };
 
           devShells.default = pkgs.mkShell {
-            nativeBuildInputs = [ java sbt ];
-            JAVA_HOME = java;
+            nativeBuildInputs = [
+              java
+              pkgs.postgresql_15
+              sbt
+            ];
           };
         }
       );
