@@ -58,6 +58,7 @@
               nativeBuildInputs = with pkgs; [
                 unzip
               ];
+              meta.mainProgram = "sysml-v2-api-services";
             };
           };
 
