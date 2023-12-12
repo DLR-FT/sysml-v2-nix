@@ -52,10 +52,11 @@
                 runHook postInstall
               '';
               preFixup = ''
-                substituteInPlace $out/bin/sysml-v2-api-services.bat \
-                  --replace 'echo "java"' '${java}/bin/java'
+                wrapProgram $out/bin/sysml-v2-api-services \
+                  --suffix PATH : ${pkgs.lib.makeBinPath (with pkgs; [ gawk java ])}
               '';
               nativeBuildInputs = with pkgs; [
+                makeWrapper
                 unzip
               ];
               meta.mainProgram = "sysml-v2-api-services";
@@ -69,6 +70,5 @@
               sbt
             ];
           };
-        }
-      );
+        });
 }
