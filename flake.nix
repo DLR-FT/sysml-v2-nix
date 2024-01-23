@@ -37,10 +37,12 @@
                 rev = version;
                 sha256 = "sha256-kel3zWaIUE7AtiXQMuQ4nYJ9ln892XlukDOp5MOLg3c=";
               };
-              depsSha256 = "sha256-3N+P965gG3QfZ8ygnFaGf1TXOcNU3RfPmxvgZ//4c5E=";
+              depsSha256 = "sha256-UjMEHHLalfxQOv1w0hZgFHE7KgkOJOCSCDhZpvb4ffg=";
 
               patches = [
                 ./emf-use-system-properties.patch
+
+                # see https://jdbc.postgresql.org/documentation/use/#unix-sockets for details
                 ./enable-unix-domain-socket-postgres.patch
               ];
 
