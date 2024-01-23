@@ -39,13 +39,15 @@
               };
               depsSha256 = "sha256-3N+P965gG3QfZ8ygnFaGf1TXOcNU3RfPmxvgZ//4c5E=";
 
+              patches = [
+                ./emf-use-system-properties.patch
+              ];
+
               # remove hardcoded, un-overridable Database credentials
               # more info:
               # https://stackoverflow.com/a/17594064
-              patchPhase = ''
-                runHook prePatch
+              postPatch = ''
                 sed '/javax\.persistence\.jdbc/d' --in-place conf/META-INF/persistence.xml
-                runHook postPatch
               '';
 
               buildPhase = ''
