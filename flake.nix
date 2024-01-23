@@ -41,6 +41,7 @@
 
               patches = [
                 ./emf-use-system-properties.patch
+                ./enable-unix-domain-socket-postgres.patch
               ];
 
               # remove hardcoded, un-overridable Database credentials
