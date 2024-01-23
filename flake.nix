@@ -40,9 +40,9 @@
               depsSha256 = "sha256-3N+P965gG3QfZ8ygnFaGf1TXOcNU3RfPmxvgZ//4c5E=";
 
               buildPhase = ''
-                runHook preInstall
+                runHook preBuild
                 sbt dist
-                runHook postInstall
+                runHook postBuild
               '';
 
               installPhase = ''
@@ -66,7 +66,7 @@
           devShells.default = pkgs.mkShell {
             nativeBuildInputs = [
               java
-              pkgs.postgresql_15
+              pkgs.postgresql
               sbt
             ];
           };
