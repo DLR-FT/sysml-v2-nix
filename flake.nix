@@ -41,6 +41,7 @@
 
               patches = [
                 ./emf-use-system-properties.patch
+                ./env-var-play-application-secret.patch
 
                 # see https://jdbc.postgresql.org/documentation/use/#unix-sockets for details
                 ./enable-unix-domain-socket-postgres.patch
