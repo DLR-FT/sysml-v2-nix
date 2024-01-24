@@ -6,6 +6,9 @@
   inputs.sbt.inputs.nixpkgs.follows = "nixpkgs";
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
+    {
+      nixosModules.default = import ./module.nix self;
+    } //
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = import nixpkgs {
