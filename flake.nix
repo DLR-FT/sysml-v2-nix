@@ -19,6 +19,8 @@
         packages = rec {
           default = sysml-v2-api-server;
 
+          sysml-v2-pilot-implementation = pkgs.callPackage pkgs/sysml-v2-pilot-implementation.nix { };
+
           sysml-v2-api-server = pkgs.callPackage pkgs/sysml-v2-api-services.nix {
             mkSbtDerivation = inputs.sbt.mkSbtDerivation.${system};
           };
