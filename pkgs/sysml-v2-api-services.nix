@@ -19,12 +19,12 @@ let
 in
 mkSbtDerivationWithCustomJava rec {
   pname = "SysML-v2-API-Services";
-  version = "2023-02";
+  version = "2024-02";
   src = fetchFromGitHub {
     owner = "Systems-Modeling";
     repo = pname;
     rev = version;
-    sha256 = "sha256-kel3zWaIUE7AtiXQMuQ4nYJ9ln892XlukDOp5MOLg3c=";
+    sha256 = "sha256-MnnLtld6UOFOYlaLVJgNbai0R8eaY8/2x/nrSbOVXO0=";
   };
   depsSha256 = "sha256-UjMEHHLalfxQOv1w0hZgFHE7KgkOJOCSCDhZpvb4ffg=";
 

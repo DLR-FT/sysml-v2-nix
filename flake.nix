@@ -16,12 +16,21 @@
         };
       in
       {
-        packages = rec {
-          default = sysml-v2-api-server;
+        packages = {
+          default = self.packages.${system}.sysml-v2-api-server;
+
+          sysml-v2-pilot-implementation = pkgs.callPackage pkgs/sysml-v2-pilot-implementation.nix { };
 
           sysml-v2-api-server = pkgs.callPackage pkgs/sysml-v2-api-services.nix {
             mkSbtDerivation = inputs.sbt.mkSbtDerivation.${system};
           };
         };
+
+        checks.nixpkgs-fmt = pkgs.runCommand "nixpkgs-fmt"
+          {
+            nativeBuildInputs = [ pkgs.nixpkgs-fmt ];
+          } "nixpkgs-fmt --check ${./.}; touch $out";
+
+        hydraJobs = (nixpkgs.lib.filterAttrs (n: _: n != "default") self.packages.${system}) // self.checks.${system};
       });
 }

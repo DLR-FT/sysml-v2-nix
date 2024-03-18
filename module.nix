@@ -5,7 +5,7 @@ let
   name = "sysml-v2-api-server";
 
   configGenerator = pkgs.writeShellApplication {
-  name = "generate-production-conf";
+    name = "generate-production-conf";
     text = ''
       rm --force -- prod.conf
       umask 177
@@ -98,4 +98,3 @@ in
     users.groups.${name} = { };
   };
 }
-
