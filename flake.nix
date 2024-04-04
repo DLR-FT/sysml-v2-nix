@@ -17,13 +17,19 @@
       in
       {
         packages = {
-          default = self.packages.${system}.sysml-v2-api-server;
+
 
           sysml-v2-pilot-implementation = pkgs.callPackage pkgs/sysml-v2-pilot-implementation.nix { };
 
           sysml-v2-api-server = pkgs.callPackage pkgs/sysml-v2-api-services.nix {
             mkSbtDerivation = inputs.sbt.mkSbtDerivation.${system};
           };
+        };
+
+        devShells.default = pkgs.mkShell {
+          nativeBuildInputs = with pkgs; [
+            nixpkgs-fmt
+          ];
         };
 
         checks.nixpkgs-fmt = pkgs.runCommand "nixpkgs-fmt"
