@@ -46,6 +46,7 @@ mkSbtDerivationWithCustomJava rec {
   # https://stackoverflow.com/a/17594064
   postPatch = ''
     sed '/javax\.persistence\.jdbc/d' --in-place conf/META-INF/persistence.xml
+    sed '/hibernate\.hbm2ddl\.auto/ s/create-drop/update/g' --in-place conf/META-INF/persistence.xml
   '';
 
   buildPhase = ''
