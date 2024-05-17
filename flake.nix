@@ -24,6 +24,8 @@
           sysml-v2-api-server = pkgs.callPackage pkgs/sysml-v2-api-services.nix {
             mkSbtDerivation = inputs.sbt.mkSbtDerivation.${system};
           };
+
+          syson-web = pkgs.callPackage pkgs/syson-web.nix { };
         };
 
         devShells.default = pkgs.mkShell {
