@@ -26,7 +26,7 @@
             mkSbtDerivation = inputs.sbt.mkSbtDerivation.${system};
           };
 
-          syson-web = pkgs.callPackage pkgs/syson-web.nix { };
+          # syson-web = pkgs.callPackage pkgs/syson-web.nix { };
         };
 
         devShells.default = pkgs.mkShell {
@@ -40,6 +40,6 @@
             nativeBuildInputs = [ pkgs.nixpkgs-fmt ];
           } "nixpkgs-fmt --check ${./.}; touch $out";
 
-        hydraJobs = (nixpkgs.lib.filterAttrs (n: _: n != "default") self.packages.${system}) // self.checks.${system};
+        hydraJobs = (nixpkgs.lib.filterAttrs (n: v: n != "default" && !v.meta.broken) self.packages.${system}) // self.checks.${system};
       });
 }
