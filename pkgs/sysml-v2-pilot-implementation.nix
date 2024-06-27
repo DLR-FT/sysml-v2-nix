@@ -1,7 +1,7 @@
-{ lib, fetchFromGitHub, makeWrapper, gradle, maven, openjdk11_headless, yarn }:
+{ lib, fetchFromGitHub, makeWrapper, gradle, maven, openjdk17_headless, yarn }:
 
 let
-  java = openjdk11_headless;
+  java = openjdk17_headless;
   mavenWithCustomJava = maven.override {
     jdk = java;
   };
@@ -10,13 +10,13 @@ in
 mavenWithCustomJava.buildMavenPackage rec {
   # pname = "plantuml-sysml-v2";
   pname = "sysml-v2-pilot-implementation";
-  version = "2023-11";
+  version = "2024-05";
 
   src = fetchFromGitHub {
     owner = "Systems-Modeling";
     repo = "SysML-v2-Pilot-Implementation";
     rev = version;
-    hash = "sha256-6bEAXVAxLbISEVtKQ05H9P2dgx8/Zc18gpFzSy4jaEU=";
+    hash = "sha256-rPGJkFRXE4ZEf52lB4sXVWIXlpFf+dLRECQl0tWYo7A=";
   };
 
   # the repo contains a couple of shell scripts which need to be executable in order for the depency
@@ -29,16 +29,26 @@ mavenWithCustomJava.buildMavenPackage rec {
     sed '/jupyter/d' --in-place pom.xml
   '';
 
-  mvnHash = "sha256-PBQwnnzKQR/2IAu32Z9kwBsfDUox6z8lBbYaUClkxqk=";
+  mvnHash = "sha256-6t4ClxfMCcaqFnR/Dkgd+884aJuV+Oc9sxYHL3twP9Y=";
 
   nativeBuildInputs = [ makeWrapper java ];
 
   installPhase = ''
     runHook preInstall
-    mkdir --parent -- $out/bin '$out/share/${pname}/'
-    find result/ -maxdepth 3 -wholename '*/target/*.jar' -exec \
-      install -Dm644 {} '$out/share/${pname}/' \;
+
+    # crate target dir
+    mkdir --parent -- $out/bin $out/docs/ $out/share/${pname} 
+
+    # copy all interesting JAR files
+    find . -maxdepth 3 -wholename '*/target/*.jar' -exec \
+      install -Dm644 {} $out/share/${pname}/ \;
+
+    # wrap the one main executable
+    makeWrapper ${lib.meta.getExe java} $out/bin/sysml-interactive --add-flags "-jar $out/share/sysml-v2-pilot-implementation/org.omg.sysml.interactive-*-SNAPSHOT-all.jar"
+
+    # copy the manual
     cp -- target/generated-docs/*.pdf $out/docs
+
     runHook postInstall
   '';
 

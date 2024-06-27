@@ -1,7 +1,7 @@
 { lib, buildNpmPackage, fetchFromGitHub, nodejs_18 }:
 
 buildNpmPackage rec {
-  pname = "";
+  pname = "eclipse-syson";
   version = "2024.3.0";
 
   src = fetchFromGitHub {
@@ -16,4 +16,6 @@ buildNpmPackage rec {
   # makeCacheWritable = true;
   # npmFlags = [ "--legacy-peer-deps" ];
   # npmWorkspace = "frontend/syson";
+
+  meta.broken = true;
 }

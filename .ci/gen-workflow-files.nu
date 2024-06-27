@@ -32,7 +32,7 @@ def get-attr-names [
   ] {
   $exprs 
     | par-each {
-        |expr| nix eval --json $expr --apply builtins.attrNames 
+        |expr| nix eval --json $expr --apply builtins.attrNames
         | from json 
       } 
     | flatten 
@@ -65,6 +65,8 @@ let targets = (get-attr-names $categories
         | par-each {
             |cat| get-attr-names [$"($cat).($system)"] 
             | each { $"($cat).($system).($in)" } 
+            # ignore broken packages
+            | filter {|drv| not (nix eval --json $"($drv).meta.broken" | from json) }
           } 
         | flatten
     ) } }
