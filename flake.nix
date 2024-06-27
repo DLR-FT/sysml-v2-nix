@@ -17,7 +17,8 @@
       in
       {
         packages = {
-          sys-ide-bin = pkgs.callPackage pkgs/sys-ide-bin.nix { };
+          sys-ide-lsp-bin = pkgs.callPackage pkgs/sys-ide-lsp-bin.nix { };
+          sys-ide-vscode-bin = pkgs.callPackage pkgs/sys-ide-vscode-bin.nix { };
 
           sysml-v2-pilot-implementation = pkgs.callPackage pkgs/sysml-v2-pilot-implementation.nix { };
 
