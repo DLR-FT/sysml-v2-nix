@@ -17,13 +17,16 @@
       in
       {
         packages = {
-          sys-ide-bin = pkgs.callPackage pkgs/sys-ide-bin.nix { };
+          sys-ide-lsp-bin = pkgs.callPackage pkgs/sys-ide-lsp-bin.nix { };
+          sys-ide-vscode-bin = pkgs.callPackage pkgs/sys-ide-vscode-bin.nix { };
 
           sysml-v2-pilot-implementation = pkgs.callPackage pkgs/sysml-v2-pilot-implementation.nix { };
 
           sysml-v2-api-server = pkgs.callPackage pkgs/sysml-v2-api-services.nix {
             mkSbtDerivation = inputs.sbt.mkSbtDerivation.${system};
           };
+
+          # syson-web = pkgs.callPackage pkgs/syson-web.nix { };
         };
 
         devShells.default = pkgs.mkShell {
@@ -37,6 +40,6 @@
             nativeBuildInputs = [ pkgs.nixpkgs-fmt ];
           } "nixpkgs-fmt --check ${./.}; touch $out";
 
-        hydraJobs = (nixpkgs.lib.filterAttrs (n: _: n != "default") self.packages.${system}) // self.checks.${system};
+        hydraJobs = (nixpkgs.lib.filterAttrs (n: v: n != "default" && !v.meta.broken) self.packages.${system}) // self.checks.${system};
       });
 }
