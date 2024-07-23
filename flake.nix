@@ -7,7 +7,7 @@
 
   outputs = { self, nixpkgs, flake-utils, ... }@inputs:
     {
-      nixosModules.default = import ./module.nix self;
+      nixosModules.sysml-v2-api-server = import ./modules/sysml-v2-api-server.nix self;
     } //
     flake-utils.lib.eachDefaultSystem (system:
       let
