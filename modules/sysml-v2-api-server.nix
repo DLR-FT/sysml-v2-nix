@@ -10,7 +10,7 @@ in
 {
   options.services.${moduleName} = {
     enable = lib.options.mkEnableOption "enable ${moduleName} model server";
-    package = lib.options.mkPackageOptionMD self.packages.${config.nixpkgs.system} "sysml-v2-api-server" { };
+    package = lib.options.mkPackageOption self.packages.${pkgs.stdenv.hostPlatform.system} "sysml-v2-api-server" { };
     instances = lib.options.mkOption {
       example = {
         play.filters.hosts.allowed = [ "." ];
