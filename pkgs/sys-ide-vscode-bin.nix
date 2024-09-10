@@ -5,7 +5,7 @@ vscode-utils.buildVscodeMarketplaceExtension {
   mktplcRef = {
     publisher = "sensmetry";
     name = "sysml-2ls";
-    version = "0.6.0";
-    sha256 = "sha256-tg9JSiU1ne+0mgX/MO2ICtnyzL3NPlJ4bibGgsSMGD0=";
+    version = "0.6.2";
+    sha256 = "sha256-gemnAqifUywpABDZw1+SCV7mQFnRS4w/cL6/UICRP24=";
   };
 }
