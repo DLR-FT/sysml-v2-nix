@@ -1,4 +1,4 @@
-{ lib, mkSbtDerivation, system, sbt, fetchFromGitHub, makeWrapper, unzip, gawk, jdk11_headless }:
+{ lib, mkSbtDerivation, sbt, fetchFromGitHub, makeWrapper, unzip, gawk, jdk11_headless }:
 
 let
   pname = "SysML-v2-API-Services";
@@ -19,12 +19,12 @@ let
 in
 mkSbtDerivationWithCustomJava rec {
   pname = "SysML-v2-API-Services";
-  version = "2024-02";
+  version = "2025-02";
   src = fetchFromGitHub {
     owner = "Systems-Modeling";
     repo = pname;
     rev = version;
-    sha256 = "sha256-MnnLtld6UOFOYlaLVJgNbai0R8eaY8/2x/nrSbOVXO0=";
+    sha256 = "sha256-8qD9HfGHmEc/2D367bEEnRdQXvKKZlZfmDF/vs4FOXo=";
   };
   depsSha256 = "sha256-UjMEHHLalfxQOv1w0hZgFHE7KgkOJOCSCDhZpvb4ffg=";
 
